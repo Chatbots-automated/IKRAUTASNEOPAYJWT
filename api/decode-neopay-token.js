@@ -1,5 +1,3 @@
-// File: /api/decode-neopay-token.js
-
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res) => {
@@ -13,16 +11,22 @@ module.exports = (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { token, secret } = req.body;
+  const { token } = req.body;
 
-  if (!token || !secret) {
-    return res.status(400).json({ error: 'Missing token or secret' });
+  if (!token) {
+    return res.status(400).json({ error: 'Missing token' });
   }
 
   try {
-    const decoded = jwt.verify(token, secret);
+    // ✅ Decode without signature verification
+    const decoded = jwt.decode(token, { complete: true });
+
+    if (!decoded) {
+      return res.status(400).json({ error: 'Unable to decode token' });
+    }
+
     return res.status(200).json({ decoded });
   } catch (error) {
-    return res.status(401).json({ error: 'Invalid token', details: error.message });
+    return res.status(500).json({ error: 'Failed to decode token', details: error.message });
   }
 };
