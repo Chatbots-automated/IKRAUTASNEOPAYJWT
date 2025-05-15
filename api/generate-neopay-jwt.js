@@ -22,17 +22,18 @@ module.exports = (req, res) => {
     return res.status(400).json({ error: 'Missing required fields: amount or transactionId' });
   }
 
+  // ✅ Payload with both transactionId and internalId
   const payload = {
-  projectId: 16155,
-  amount,
-  currency: 'EUR',
-  transactionId,
-  internalId: transactionId, // ✅ THIS is the line you must add
-  paymentPurpose,
-  serviceType: 'pisp',
-  clientRedirectUrl,
-  defaultLocale: 'LT'
-};
+    projectId: 16155,
+    amount,
+    currency: 'EUR',
+    transactionId,
+    internalId: transactionId, // ✅ This lets Make.com access the dynamic key
+    paymentPurpose,
+    serviceType: 'pisp',
+    clientRedirectUrl,
+    defaultLocale: 'LT'
+  };
 
   const secret = 'edEIbadNdqu5UumPqd7Ni9DvBRd8HEMX';
 
