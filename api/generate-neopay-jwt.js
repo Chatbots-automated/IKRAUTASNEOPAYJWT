@@ -23,15 +23,16 @@ module.exports = (req, res) => {
   }
 
   const payload = {
-    projectId: 16155,
-    amount,
-    currency: 'EUR',
-    transactionId,
-    paymentPurpose,
-    serviceType: 'pisp',
-    clientRedirectUrl,
-    defaultLocale: 'LT'
-  };
+  projectId: 16155,
+  amount,
+  currency: 'EUR',
+  transactionId,
+  internalId: transactionId, // ✅ THIS is the line you must add
+  paymentPurpose,
+  serviceType: 'pisp',
+  clientRedirectUrl,
+  defaultLocale: 'LT'
+};
 
   const secret = 'edEIbadNdqu5UumPqd7Ni9DvBRd8HEMX';
 
