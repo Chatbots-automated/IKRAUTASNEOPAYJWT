@@ -23,19 +23,22 @@ module.exports = (req, res) => {
         const txId = txIds[0];
         const txData = transactions[txId];
 
-        // ✅ Inject leadId and amount clearly
+        // ✅ Inject main values
         decoded.payload.leadId = txId;
         decoded.payload.amount = txData?.amount;
-        decoded.payload.transactionData = txData;
 
-        // Optional: remove paymentPurpose if it's just the ID again
-        if (txData?.paymentPurpose === txId) {
-          decoded.payload.transactionData.paymentPurpose = null;
-        }
+        // ✅ Format payment purpose
+        const purpose = `Avansinis mokėjimas ${txId}`;
+        decoded.payload.transactionData = {
+          ...txData,
+          leadId: txId,
+          paymentPurpose: purpose,
+        };
       }
     }
 
-    return res.status(200).json({ decoded });
+    // ✅ Always return 200 OK to prevent NeoPay resends
+    return res.status(200).json({ decoded, success: true });
   } catch (error) {
     return res.status(500).json({ error: 'Failed to decode token', details: error.message });
   }
