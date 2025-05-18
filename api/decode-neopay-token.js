@@ -17,17 +17,21 @@ module.exports = (req, res) => {
 
     const transactions = decoded.payload?.transactions;
 
-    // ✅ Grab the first transactionId (key) and flatten
     if (transactions && typeof transactions === 'object') {
       const txIds = Object.keys(transactions);
       if (txIds.length > 0) {
         const txId = txIds[0];
         const txData = transactions[txId];
 
-        // Inject leadId and amount as top-level fields
+        // ✅ Inject leadId and amount clearly
         decoded.payload.leadId = txId;
         decoded.payload.amount = txData?.amount;
-        decoded.payload.transactionData = txData; // optional full object
+        decoded.payload.transactionData = txData;
+
+        // Optional: remove paymentPurpose if it's just the ID again
+        if (txData?.paymentPurpose === txId) {
+          decoded.payload.transactionData.paymentPurpose = null;
+        }
       }
     }
 
