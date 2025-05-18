@@ -16,13 +16,18 @@ module.exports = (req, res) => {
     if (!decoded) return res.status(400).json({ error: 'Unable to decode token' });
 
     const transactions = decoded.payload?.transactions;
-    const internalId = decoded.payload?.internalId;
 
-    if (transactions && typeof transactions === 'object' && internalId) {
-      const txData = transactions[internalId];
-      if (txData) {
-        decoded.payload.transactionId = internalId;
-        decoded.payload.transactionData = txData;
+    // ✅ Grab the first transactionId (key) and flatten
+    if (transactions && typeof transactions === 'object') {
+      const txIds = Object.keys(transactions);
+      if (txIds.length > 0) {
+        const txId = txIds[0];
+        const txData = transactions[txId];
+
+        // Inject leadId and amount as top-level fields
+        decoded.payload.leadId = txId;
+        decoded.payload.amount = txData?.amount;
+        decoded.payload.transactionData = txData; // optional full object
       }
     }
 
