@@ -18,11 +18,21 @@ module.exports = (req, res) => {
   }
 
   try {
-    // ✅ Decode without signature verification
     const decoded = jwt.decode(token, { complete: true });
 
     if (!decoded) {
       return res.status(400).json({ error: 'Unable to decode token' });
+    }
+
+    // ✅ Flatten transactions and inject static ID
+    const transactions = decoded.payload?.transactions;
+    if (transactions && typeof transactions === 'object') {
+      const transactionIds = Object.keys(transactions);
+      if (transactionIds.length === 1) {
+        const txId = transactionIds[0];
+        decoded.payload.transactionId = txId;
+        decoded.payload.transactionData = transactions[txId]; // flattened
+      }
     }
 
     return res.status(200).json({ decoded });
