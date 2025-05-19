@@ -16,7 +16,6 @@ module.exports = (req, res) => {
     if (!decoded) return res.status(400).json({ error: 'Unable to decode token' });
 
     const transactions = decoded.payload?.transactions;
-    const singleProjectItemId = decoded.payload?.singleProjectItemId;
 
     if (transactions && typeof transactions === 'object') {
       const txIds = Object.keys(transactions);
@@ -24,16 +23,24 @@ module.exports = (req, res) => {
         const txId = txIds[0];
         const txData = transactions[txId];
 
-        decoded.payload.leadId = txId;
-        decoded.payload.amount = txData?.amount;
-        decoded.payload.singleProjectItemId = singleProjectItemId;
+        const leadId = txId;
+        const amount = txData?.amount;
+        const singleProjectItemId = decoded.payload?.singleProjectItemId || null;
+        const type = decoded.payload?.type || 'advance';
 
+        // Inject top-level fields
+        decoded.payload.leadId = leadId;
+        decoded.payload.amount = amount;
+        decoded.payload.singleProjectItemId = singleProjectItemId;
+        decoded.payload.type = type;
+
+        // Inject into transactionData
         decoded.payload.transactionData = {
           ...txData,
-          leadId: txId,
-          type: 'advance',
+          leadId,
+          type,
           singleProjectItemId,
-          paymentPurpose: `Avansinis mokėjimas ${txId}`,
+          paymentPurpose: `Avansinis mokėjimas ${leadId}`
         };
       }
     }
