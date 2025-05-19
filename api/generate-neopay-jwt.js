@@ -6,19 +6,17 @@ module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') return res.status(200).end();
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const {
     amount,
     transactionId,
+    singleProjectItemId, // ✅ Added
     clientRedirectUrl = 'https://google.com'
   } = req.body;
 
-  if (!amount || !transactionId) {
-    return res.status(400).json({ error: 'Missing required fields: amount or transactionId' });
+  if (!amount || !transactionId || !singleProjectItemId) {
+    return res.status(400).json({ error: 'Missing required fields: amount, transactionId or singleProjectItemId' });
   }
 
   const payload = {
@@ -27,7 +25,8 @@ module.exports = (req, res) => {
     currency: 'EUR',
     transactionId,
     internalId: transactionId,
-    type: 'advance', // ✅ added
+    singleProjectItemId, // ✅ Injected
+    type: 'advance',
     paymentPurpose: `Avansinis mokėjimas ${transactionId}`,
     serviceType: 'pisp',
     clientRedirectUrl,
