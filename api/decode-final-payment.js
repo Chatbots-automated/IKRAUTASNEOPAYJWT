@@ -24,7 +24,6 @@ module.exports = (req, res) => {
         const txId = txIds[0];
         const txData = transactions[txId];
 
-        // Inject key values
         decoded.payload.leadId = txId;
         decoded.payload.amount = txData?.amount;
         decoded.payload.singleProjectItemId = singleProjectItemId;
@@ -32,6 +31,7 @@ module.exports = (req, res) => {
         decoded.payload.transactionData = {
           ...txData,
           leadId: txId,
+          type: 'final', // ✅ included here as well
           paymentPurpose: `Galutinis mokėjimas ${txId}`,
           singleProjectItemId
         };
