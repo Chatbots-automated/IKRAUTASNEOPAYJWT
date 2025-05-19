@@ -20,19 +20,20 @@ module.exports = (req, res) => {
   }
 
   const payload = {
-    projectId: 99999, // ⛳️ Replace with your FINAL payment project ID
+    projectId: 16155, // using same project
     amount,
     currency: 'EUR',
     transactionId,
     internalId: transactionId,
-    singleProjectItemId, // ✅ custom field to identify row directly
+    singleProjectItemId,
+    type: 'final', // ✅ added
     paymentPurpose: `Galutinis mokėjimas ${transactionId}`,
     serviceType: 'pisp',
     clientRedirectUrl,
     defaultLocale: 'LT'
   };
 
-  const secret = 'your-final-payment-secret-key'; // 🛡️ Replace with real one
+  const secret = 'edEIbadNdqu5UumPqd7Ni9DvBRd8HEMX';
 
   try {
     const token = jwt.sign(payload, secret, {
