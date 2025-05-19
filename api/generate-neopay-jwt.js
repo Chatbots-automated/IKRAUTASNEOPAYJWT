@@ -21,14 +21,14 @@ module.exports = (req, res) => {
     return res.status(400).json({ error: 'Missing required fields: amount or transactionId' });
   }
 
-  // ✅ Clean dynamic payload
   const payload = {
     projectId: 16155,
     amount,
     currency: 'EUR',
     transactionId,
-    internalId: transactionId,                 // ✅ Always present in payload
-    paymentPurpose: transactionId.toString(),  // ✅ Set paymentPurpose to transactionId
+    internalId: transactionId,
+    type: 'advance', // ✅ added
+    paymentPurpose: `Avansinis mokėjimas ${transactionId}`,
     serviceType: 'pisp',
     clientRedirectUrl,
     defaultLocale: 'LT'
