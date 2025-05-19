@@ -16,6 +16,7 @@ module.exports = (req, res) => {
     if (!decoded) return res.status(400).json({ error: 'Unable to decode token' });
 
     const transactions = decoded.payload?.transactions;
+    const singleProjectItemId = decoded.payload?.singleProjectItemId;
 
     if (transactions && typeof transactions === 'object') {
       const txIds = Object.keys(transactions);
@@ -25,11 +26,13 @@ module.exports = (req, res) => {
 
         decoded.payload.leadId = txId;
         decoded.payload.amount = txData?.amount;
+        decoded.payload.singleProjectItemId = singleProjectItemId;
 
         decoded.payload.transactionData = {
           ...txData,
           leadId: txId,
-          type: 'advance', // ✅ make sure this is injected back
+          type: 'advance',
+          singleProjectItemId,
           paymentPurpose: `Avansinis mokėjimas ${txId}`,
         };
       }
