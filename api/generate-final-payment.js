@@ -10,24 +10,24 @@ module.exports = (req, res) => {
 
   const {
     amount,
-    transactionId,
-    singleProjectItemId,
+    leadId, // original Sales Pipeline ID
+    singleProjectItemId, // unique ID for NeoPay
     clientRedirectUrl = 'https://google.com'
   } = req.body;
 
-  if (!amount || !transactionId || !singleProjectItemId) {
-    return res.status(400).json({ error: 'Missing required fields: amount, transactionId, or singleProjectItemId' });
+  if (!amount || !leadId || !singleProjectItemId) {
+    return res.status(400).json({ error: 'Missing required fields' });
   }
 
   const payload = {
-    projectId: 16155, // using same project
+    projectId: 16155,
     amount,
     currency: 'EUR',
-    transactionId,
-    internalId: transactionId,
+    transactionId: singleProjectItemId,               // ✅ used for NeoPay uniqueness
+    internalId: leadId,                               // ✅ keeps original context
+    type: 'final',
+    paymentPurpose: `Galutinis mokėjimas ${leadId}`,  // ✅ shown in bank
     singleProjectItemId,
-    type: 'final', // ✅ added
-    paymentPurpose: `Galutinis mokėjimas ${transactionId}`,
     serviceType: 'pisp',
     clientRedirectUrl,
     defaultLocale: 'LT'
